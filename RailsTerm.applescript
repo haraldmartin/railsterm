@@ -1,9 +1,10 @@
--- RailsTerm 0.3.1
+-- RailsTerm 0.3.2
 -- 
 -- martin.strom at gmail dot com
 -- 
 -- HISTORY
 -- 
+-- 0.3.2 Support for Rails 3
 -- 0.3.1 Updated to work with 10.6 Terminal
 -- 0.3 Use passenger/mod_rails and auto detect vhosts added by Passenger.prefpane
 -- 0.2 Use 10.5 Terminal instead
@@ -106,7 +107,7 @@ end rails_dir_exists
 
 on open_rails_tabs()
 	my open_tab("Log", "tail -f log/development.log")
-	my open_tab("Console", "./script/console")
+	my open_tab("Console", "[[ -x script/console ]] && script/console || rails c")
 	my open_tab("Autotest", "[[ -d spec ]] && autospec || autotest")
 	
 	tell application "TextMate" to activate
