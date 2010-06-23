@@ -1,16 +1,17 @@
--- RailsTerm 0.3
+-- RailsTerm 0.3.1
 -- 
 -- martin.strom at gmail dot com
 -- 
 -- HISTORY
 -- 
+-- 0.3.1 Updated to work with 10.6 Terminal
 -- 0.3 Use passenger/mod_rails and auto detect vhosts added by Passenger.prefpane
 -- 0.2 Use 10.5 Terminal instead
 -- 0.1 Initial version
 --
 
 -- Settings --
-set visor_enabled to false -- if you use Visor “http://docs.blacktree.com/visor/visor”, set this to true
+set visor_enabled to false -- if you use Visor (http://docs.blacktree.com/visor/visor), set this to true
 
 -- Run it
 global rails_dir, min_window_count, visor_enabled
@@ -48,7 +49,7 @@ on get_rails_projects()
 end get_rails_projects
 
 on projects_from_passenger_vhosts()
-	set cmd to "for file in /etc/apache2/passenger_pane_vhosts/*.vhost.conf; do grep DocumentRoot $file | awk '{print $2}' | sed 's/\"//g' | sed 's/\\/public$//g' ; done"
+	set cmd to "for file in /etc/apache2/passenger_pane_vhosts/*.vhost.conf; do grep DocumentRoot $file | awk '{print $2}' | sed 's/\"//g' | sed 's/\\/public$//g' ; done | sort -ubf"
 	do shell script cmd
 	set output to the result as text
 	
@@ -107,6 +108,8 @@ on open_rails_tabs()
 	my open_tab("Log", "tail -f log/development.log")
 	my open_tab("Console", "./script/console")
 	my open_tab("Autotest", "[[ -d spec ]] && autospec || autotest")
+	
+	tell application "TextMate" to activate
 	my open_tab("Rails Directory", "mater") -- I use `mater` @ http://pastie.textmate.org/221354 instead of `mate .` for rails apps
 end open_rails_tabs
 
@@ -116,7 +119,7 @@ on open_tab(title, the_command)
 	my create_new_window_or_tabs()
 	
 	tell application "Terminal" to ¬
-		do script with command ("cd " & rails_dir & "&& unset PROMPT_COMMAND && echo -n -e \"\\e]0;" & title & "\\a\" && " & the_command) ¬
+		do script with command ("cd " & rails_dir & "&& unset PROMPT_COMMAND && echo -n -e \"\\033]0;" & title & "\\007\" && " & the_command) ¬
 			in last tab of window 1
 end open_tab
 
